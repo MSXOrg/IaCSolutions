@@ -22,11 +22,7 @@ jobs:
       - name: Get-ComputerInfo
         shell: pwsh
         run: |
-          top
-          Get-Module -ListAvailable
-          "---------------------------------"
-          "GetCommand"
-          Get-Command
+          cat /proc/cpuinfo | grep processor | wc -l
   
   build2:
     # The type of runner that the job will run on
