@@ -7,6 +7,7 @@ trigger:
 
 variables:
   Location: 'West Europe'
+  serviceConnection: 'S001-DemoSub'
   TemplateFile: 'Solutions\AppA\main.bicep'
   TemplateParameterFile: 'Deployments\Marius-AppA\parameters.json'
 
@@ -24,7 +25,7 @@ stages:
         name: LintBicepCode
         displayName: Run Bicep linter
         inputs:
-          azureSubscription: 'S001-DemoSub'
+          azureSubscription: $(serviceConnection)
           ScriptType: 'InlineScript'
           azurePowerShellVersion: 'LatestVersion'
           pwsh: true
@@ -35,7 +36,7 @@ stages:
     steps:
       - task: AzurePowerShell@5
         inputs:
-          azureSubscription: 'S001-DemoSub'
+          azureSubscription: $(serviceConnection)
           ScriptType: 'InlineScript'
           azurePowerShellVersion: 'LatestVersion'
           pwsh: true
@@ -59,7 +60,7 @@ stages:
     steps:
       - task: AzurePowerShell@5
         inputs:
-          azureSubscription: 'S001-DemoSub'
+          azureSubscription: $(serviceConnection)
           ScriptType: 'InlineScript'
           azurePowerShellVersion: 'LatestVersion'
           pwsh: true
@@ -88,7 +89,7 @@ stages:
     steps:
     - task: AzurePowerShell@5
       inputs:
-        azureSubscription: 'S001-DemoSub'
+        azureSubscription: $(serviceConnection)
         ScriptType: 'InlineScript'
         azurePowerShellVersion: 'LatestVersion'
         pwsh: true
@@ -117,7 +118,7 @@ stages:
     steps:
     - task: AzurePowerShell@5
       inputs:
-        azureSubscription: 'S001-DemoSub'
+        azureSubscription: $(serviceConnection)
         ScriptType: 'InlineScript'
         azurePowerShellVersion: 'LatestVersion'
         pwsh: true
@@ -146,7 +147,7 @@ stages:
     steps:
     - task: AzurePowerShell@5
       inputs:
-        azureSubscription: 'S001-DemoSub'
+        azureSubscription: $(serviceConnection)
         ScriptType: 'InlineScript'
         azurePowerShellVersion: 'LatestVersion'
         pwsh: true
