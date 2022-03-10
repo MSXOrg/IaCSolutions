@@ -1,0 +1,12 @@
+{
+    "name": "CakeSpinner",
+    "description": "Spin cakes to win",
+    "actions": [
+        "Microsoft.Compute/*/read",
+        "Microsoft.Compute/virtualMachines/powerOff/action",
+        "Microsoft.Compute/virtualMachines/start/action"
+    ],
+    "notActions": [],
+    "dataActions": [],
+    "notDataActions": []
+}
