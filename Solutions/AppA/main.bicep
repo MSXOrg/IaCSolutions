@@ -30,6 +30,7 @@ module rg '../../Modules/Microsoft.Resources/resourceGroups/deploy.bicep' = {
     }
 }
 
+
 module CakeSpinnerRole '../../Modules/Microsoft.Authorization/roleDefinitions/subscription/deploy.bicep' = {
     name: 'roledef-${deployID}-CakeSpinnerRole'
     params: {
