@@ -3,19 +3,19 @@ name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd
 pr: none
 
 trigger:
- branches:
-  include:
-    - '*'
-  paths:
+  branches:
     include:
-      - Deployments/*
-      - Solutions/*
+      - '*'
+    paths:
+      include:
+        - Deployments/Marius-MLOps/*
+        - Solutions/MLOps/*
 
 variables:
   Location: 'westeurope'
-  serviceConnection: 'MSX-SPN'
-  TemplateFile: 'Solutions\AppA\main.bicep'
-  TemplateParameterFile: 'Deployments\Marius-AppA\parameters.json'
+  serviceConnection: 'IaCSolutions-SPN'
+  TemplateFile: 'Solutions\MLOps\main.bicep'
+  TemplateParameterFile: 'Deployments\Marius-MLOps\parameters.json'
 
 pool:
   vmImage: ubuntu-latest

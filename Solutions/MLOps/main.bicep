@@ -11,8 +11,6 @@ param appName string = 'appa'
 
 param location string = 'westeurope'
 
-var CakeSpinnerRoleProperties = json(loadTextContent('./CakeSpinnerRole.json'))
-
 var rgName = '${appName}${env}rg'
 
 var deployID = uniqueString(deployment().name, location)
@@ -30,44 +28,6 @@ module rg '../../Modules/Microsoft.Resources/resourceGroups/deploy.bicep' = {
     }
 }
 
-module CakeSpinnerRole '../../Modules/Microsoft.Authorization/roleDefinitions/subscription/deploy.bicep' = {
-    name: 'dep-${deployID}-CakeSpinnerRole-roledef'
-    params: {
-        roleName: CakeSpinnerRoleProperties.name
-        actions: CakeSpinnerRoleProperties.actions
-        dataActions: CakeSpinnerRoleProperties.dataActions
-        description: CakeSpinnerRoleProperties.description
-        notActions: CakeSpinnerRoleProperties.notActions
-        notDataActions: CakeSpinnerRoleProperties.notDataActions
-    }
-}
-
-module FunctionApp '../../Modules/Microsoft.Web/sites/deploy.bicep' = {
-    name: 'dep-${deployID}-fa'
-    scope: resourceGroup(rgName)
-    params: {
-        name: '${appName}${env}fa'
-        location: location
-        kind: 'functionapp'
-        appServicePlanObject: {
-            name: '${appName}${env}asp'
-            serverOS: 'Linux'
-            skuName: 'P1v2'
-            skuCapacity: 2
-            skuTier: 'PremiumV2'
-            skuSize: 'P1v2'
-            skuFamily: 'Pv2'
-        }
-        appInsightId: appInsights.outputs.appInsightsResourceId
-        siteConfig: {
-            alwaysOn: true
-        }
-        functionsWorkerRuntime: 'powershell'
-        systemAssignedIdentity: true
-        diagnosticWorkspaceId: logAnalytics.outputs.logAnalyticsWorkspaceId
-    }
-}
-
 module storage '../../Modules/Microsoft.Storage/storageAccounts/deploy.bicep' = {
     name: 'dep-${deployID}-sa'
     scope: resourceGroup(rgName)
@@ -76,14 +36,6 @@ module storage '../../Modules/Microsoft.Storage/storageAccounts/deploy.bicep' = 
         location: location
         allowBlobPublicAccess: false
         diagnosticWorkspaceId: logAnalytics.outputs.logAnalyticsWorkspaceId
-        roleAssignments: [
-            {
-                roleDefinitionIdOrName: CakeSpinnerRole.outputs.resourceId
-                principalIds: [
-                    FunctionApp.outputs.systemAssignedPrincipalId
-                ]
-            }
-        ]
     }
     dependsOn: [
         rg
@@ -121,7 +73,7 @@ module appInsights '../../Modules/Microsoft.Insights/components/deploy.bicep' = 
     params: {
         name: '${appName}${env}ic'
         location: location
-        appInsightsWorkspaceResourceId: logAnalytics.outputs.logAnalyticsResourceId
+        workspaceResourceId: logAnalytics.outputs.resourceId
     }
     dependsOn: [
         rg
@@ -147,10 +99,10 @@ module mlworkspaces '../../Modules/Microsoft.MachineLearningServices/workspaces/
     params: {
         name: '${appName}${env}ml'
         location: location
-        associatedApplicationInsightsResourceId: appInsights.outputs.appInsightsResourceId
-        associatedKeyVaultResourceId: keyVault.outputs.keyVaultResourceId
-        associatedStorageAccountResourceId: storage.outputs.storageAccountResourceId
-        associatedContainerRegistryResourceId: containerRegistry.outputs.acrResourceId
+        associatedApplicationInsightsResourceId: appInsights.outputs.resourceId
+        associatedKeyVaultResourceId: keyVault.outputs.resourceId
+        associatedStorageAccountResourceId: storage.outputs.resourceId
+        associatedContainerRegistryResourceId: containerRegistry.outputs.resourceId
         sku: 'Basic'
         systemAssignedIdentity: true
         diagnosticWorkspaceId: logAnalytics.outputs.logAnalyticsWorkspaceId
@@ -160,6 +112,6 @@ module mlworkspaces '../../Modules/Microsoft.MachineLearningServices/workspaces/
     ]
 }
 
-output rgName string = rg.outputs.resourceGroupName
-output mlname string = mlworkspaces.outputs.machineLearningServiceName
+output rgName string = rg.outputs.name
+output mlname string = mlworkspaces.outputs.name
 output mlprincipalId string = mlworkspaces.outputs.principalId
