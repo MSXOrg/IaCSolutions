@@ -6,10 +6,10 @@ trigger:
   branches:
     include:
       - '*'
-    paths:
-      include:
-        - Deployments/Marius-MLOps/*
-        - Solutions/MLOps/*
+  paths:
+    include:
+      - Deployments/Marius-MLOps/*
+      - Solutions/MLOps/*
 
 variables:
   Location: 'westeurope'
