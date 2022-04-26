@@ -1,0 +1,145 @@
+name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+pr: none
+
+trigger:
+ branches:
+  include:
+    - '*'
+  paths:
+    include:
+      - Deployments/*
+      - Solutions/*
+
+variables:
+  Location: 'westeurope'
+  serviceConnection: 'MSX-SPN'
+  TemplateFile: 'Solutions\AppA\main.bicep'
+  TemplateParameterFile: 'Deployments\Marius-AppA\parameters.json'
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: Prep
+  displayName: Prepare subscription
+  jobs:
+  - job: PrepSub
+    displayName: Prepare subscription
+    steps:
+    - task: AzurePowerShell@5
+      inputs:
+        azureSubscription: $(serviceConnection)
+        ScriptType: 'InlineScript'
+        azurePowerShellVersion: 'LatestVersion'
+        pwsh: true
+        Inline: |
+          . .\Scripts\EnableResourceProviders\Enable-ResourceProviders.ps1 -Verbose
+
+- stage: Checkcode
+  displayName: Check code
+  jobs:
+  - job: LintCode
+    displayName: Lint code
+    steps:
+      - task: AzurePowerShell@5
+        name: LintBicepCode
+        displayName: Run Bicep linter
+        inputs:
+          azureSubscription: $(serviceConnection)
+          ScriptType: 'InlineScript'
+          azurePowerShellVersion: 'LatestVersion'
+          pwsh: true
+          Inline: |
+            az bicep build --file '$(TemplateFile)'
+
+  - job: Validate
+    displayName: Validate solution
+    steps:
+    - task: AzurePowerShell@5
+      inputs:
+        azureSubscription: $(serviceConnection)
+        ScriptType: 'InlineScript'
+        azurePowerShellVersion: 'LatestVersion'
+        pwsh: true
+        Inline: |
+          $DeploymentInputs = @{
+              Name                  = "Sub-$(-join (Get-Date -Format yyyyMMddTHHMMssffffZ)[0..63])"
+              Location              = '$(Location)'
+              TemplateFile          = '$(TemplateFile)'
+              TemplateParameterFile = '$(TemplateParameterFile)'
+              Verbose               = $true
+              ErrorAction           = 'Stop'
+          }
+
+          Write-Output 'Subscription deployment using:'
+          $DeploymentInputs
+
+          $Result = Test-AzSubscriptionDeployment @DeploymentInputs
+
+          if (-not [string]::IsNullOrEmpty($Result.Code)) {
+              $Result
+
+              if ($Result.Code -ne 'Success') {
+                  throw "Result code returned: $($Result.Code)"
+              }
+          }
+
+- stage: DeployWhatIf
+  dependsOn: Validate
+  displayName: Deploy (whatif) solution
+  jobs:
+  - job: DeployWhatIf
+    displayName: Deploy (whatif) solution
+    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/main'))
+    steps:
+    - task: AzurePowerShell@5
+      inputs:
+        azureSubscription: $(serviceConnection)
+        ScriptType: 'InlineScript'
+        azurePowerShellVersion: 'LatestVersion'
+        pwsh: true
+        Inline: |
+          $DeploymentInputs = @{
+              Name                  = "Sub-$(-join (Get-Date -Format yyyyMMddTHHMMssffffZ)[0..63])"
+              Location              = '$(Location)'
+              TemplateFile          = '$(TemplateFile)'
+              TemplateParameterFile = '$(TemplateParameterFile)'
+              WhatIf                = $true
+              Verbose               = $true
+              ErrorAction           = 'Stop'
+          }
+
+          Write-Output 'Subscription deployment using:'
+          $DeploymentInputs
+
+          New-AzSubscriptionDeployment @DeploymentInputs
+
+- stage: Deploy
+  dependsOn: Validate
+  displayName: Deploy solution
+  jobs:
+  - job: Deploy
+    displayName: Deploy solution
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    steps:
+    - task: AzurePowerShell@5
+      inputs:
+        azureSubscription: $(serviceConnection)
+        ScriptType: 'InlineScript'
+        azurePowerShellVersion: 'LatestVersion'
+        pwsh: true
+        Inline: |
+          $DeploymentInputs = @{
+              Name                  = "Sub-$(-join (Get-Date -Format yyyyMMddTHHMMssffffZ)[0..63])"
+              Location              = '$(Location)'
+              TemplateFile          = '$(TemplateFile)'
+              TemplateParameterFile = '$(TemplateParameterFile)'
+              Verbose               = $true
+              ErrorAction           = 'Stop'
+          }
+
+          Write-Output 'Subscription deployment using:'
+          $DeploymentInputs
+
+          New-AzSubscriptionDeployment @DeploymentInputs

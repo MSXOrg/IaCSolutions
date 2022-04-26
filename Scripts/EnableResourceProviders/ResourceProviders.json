@@ -1,0 +1,8 @@
+[
+    {
+        "name": "Microsoft.Compute",
+        "features": [
+            "EncryptionAtHost"
+        ]
+    }
+]

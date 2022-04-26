@@ -1,0 +1,9 @@
+{
+    "moduleAliases": {
+        "br": {
+            "shared": {
+                "registry": "crbecsebicepprdweeu01.azurecr.io"
+            }
+        }
+    }
+}
