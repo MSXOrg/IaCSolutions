@@ -57,6 +57,7 @@ stages:
     displayName: Validate solution
     steps:
     - task: AzurePowerShell@5
+      displayName: Validate solution
       inputs:
         azureSubscription: $(serviceConnection)
         ScriptType: 'InlineScript'
@@ -94,6 +95,7 @@ stages:
     condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/main'))
     steps:
     - task: AzurePowerShell@5
+      displayName: Deploy (whatif) solution
       inputs:
         azureSubscription: $(serviceConnection)
         ScriptType: 'InlineScript'
@@ -124,6 +126,7 @@ stages:
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     steps:
     - task: AzurePowerShell@5
+      displayName: Deploy solution
       inputs:
         azureSubscription: $(serviceConnection)
         ScriptType: 'InlineScript'
