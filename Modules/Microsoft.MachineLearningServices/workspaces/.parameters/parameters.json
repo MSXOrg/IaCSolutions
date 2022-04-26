@@ -3,19 +3,57 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "name": {
-            "value": "sxx-az-mls-x-001"
+            "value": "<<namePrefix>>-az-mls-x-001"
         },
         "sku": {
             "value": "Basic"
         },
         "associatedStorageAccountResourceId": {
-            "value": "/subscriptions/<<subscriptionId>>/resourceGroups/validation-rg/providers/Microsoft.Storage/storageAccounts/msxsxxazsax001"
+            "value": "/subscriptions/<<subscriptionId>>/resourceGroups/validation-rg/providers/Microsoft.Storage/storageAccounts/adp<<namePrefix>>azsax001"
         },
         "associatedKeyVaultResourceId": {
-            "value": "/subscriptions/<<subscriptionId>>/resourceGroups/validation-rg/providers/Microsoft.KeyVault/vaults/msx-sxx-az-kv-x-001"
+            "value": "/subscriptions/<<subscriptionId>>/resourceGroups/validation-rg/providers/Microsoft.KeyVault/vaults/adp-<<namePrefix>>-az-kv-x-001"
         },
         "associatedApplicationInsightsResourceId": {
-            "value": "/subscriptions/<<subscriptionId>>/resourceGroups/validation-rg/providers/Microsoft.Insights/components/msx-sxx-az-appi-x-001"
+            "value": "/subscriptions/<<subscriptionId>>/resourceGroups/validation-rg/providers/Microsoft.Insights/components/adp-<<namePrefix>>-az-appi-x-001"
+        },
+        "systemAssignedIdentity": {
+            "value": true
+        },
+        "userAssignedIdentities": {
+            "value": {
+                "/subscriptions/<<subscriptionId>>/resourcegroups/validation-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/adp-<<namePrefix>>-az-msi-x-001": {}
+            }
+        },
+        "computes": {
+            "value": [
+                {
+                    "name": "DefaultCPU",
+                    "location": "westeurope",
+                    "computeLocation": "westeurope",
+                    "sku": "Basic",
+                    "systemAssignedIdentity": true,
+                    "userAssignedIdentities": {
+                        "/subscriptions/<<subscriptionId>>/resourcegroups/validation-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/adp-<<namePrefix>>-az-msi-x-001": {}
+                    },
+                    "description": "Default CPU Cluster",
+                    "disableLocalAuth": false,
+                    "computeType": "AmlCompute",
+                    "properties": {
+                        "enableNodePublicIp": true,
+                        "isolatedNetwork": false,
+                        "osType": "Linux",
+                        "remoteLoginPortPublicAccess": "Disabled",
+                        "scaleSettings": {
+                            "maxNodeCount": 3,
+                            "minNodeCount": 0,
+                            "nodeIdleTimeBeforeScaleDown": "PT5M"
+                        },
+                        "vmPriority": "Dedicated",
+                        "vmSize": "STANDARD_DS11_V2"
+                    }
+                }
+            ]
         },
         "roleAssignments": {
             "value": [
@@ -31,19 +69,16 @@
             "value": 7
         },
         "diagnosticStorageAccountId": {
-            "value": "/subscriptions/<<subscriptionId>>/resourceGroups/validation-rg/providers/Microsoft.Storage/storageAccounts/msxsxxazsax001"
+            "value": "/subscriptions/<<subscriptionId>>/resourceGroups/validation-rg/providers/Microsoft.Storage/storageAccounts/adp<<namePrefix>>azsax001"
         },
         "diagnosticWorkspaceId": {
-            "value": "/subscriptions/<<subscriptionId>>/resourcegroups/validation-rg/providers/microsoft.operationalinsights/workspaces/msx-sxx-az-law-x-001"
+            "value": "/subscriptions/<<subscriptionId>>/resourcegroups/validation-rg/providers/microsoft.operationalinsights/workspaces/adp-<<namePrefix>>-az-law-x-001"
         },
         "diagnosticEventHubAuthorizationRuleId": {
-            "value": "/subscriptions/<<subscriptionId>>/resourceGroups/validation-rg/providers/Microsoft.EventHub/namespaces/msx-sxx-az-evhns-x-001/AuthorizationRules/RootManageSharedAccessKey"
+            "value": "/subscriptions/<<subscriptionId>>/resourceGroups/validation-rg/providers/Microsoft.EventHub/namespaces/adp-<<namePrefix>>-az-evhns-x-001/AuthorizationRules/RootManageSharedAccessKey"
         },
         "diagnosticEventHubName": {
-            "value": "msx-sxx-az-evh-x-001"
-        },
-        "systemAssignedIdentity": {
-            "value": true
+            "value": "adp-<<namePrefix>>-az-evh-x-001"
         }
     }
 }
