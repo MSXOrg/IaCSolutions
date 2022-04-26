@@ -35,7 +35,7 @@ module storage '../../Modules/Microsoft.Storage/storageAccounts/deploy.bicep' = 
         name: '${appName}${env}sa'
         location: location
         allowBlobPublicAccess: false
-        diagnosticWorkspaceId: logAnalytics.outputs.logAnalyticsWorkspaceId
+        diagnosticWorkspaceId: logAnalytics.outputs.resourceId
     }
     dependsOn: [
         rg
@@ -48,7 +48,7 @@ module keyVault '../../Modules/Microsoft.KeyVault/vaults/deploy.bicep' = {
     params: {
         name: '${appName}${env}kv'
         location: location
-        diagnosticWorkspaceId: logAnalytics.outputs.logAnalyticsWorkspaceId
+        diagnosticWorkspaceId: logAnalytics.outputs.resourceId
     }
     dependsOn: [
         rg
@@ -86,7 +86,7 @@ module containerRegistry '../../Modules/Microsoft.ContainerRegistry/registries/d
     params: {
         name: '${appName}${env}cr'
         location: location
-        diagnosticWorkspaceId: logAnalytics.outputs.logAnalyticsWorkspaceId
+        diagnosticWorkspaceId: logAnalytics.outputs.resourceId
     }
     dependsOn: [
         rg
@@ -105,7 +105,7 @@ module mlworkspaces '../../Modules/Microsoft.MachineLearningServices/workspaces/
         associatedContainerRegistryResourceId: containerRegistry.outputs.resourceId
         sku: 'Basic'
         systemAssignedIdentity: true
-        diagnosticWorkspaceId: logAnalytics.outputs.logAnalyticsWorkspaceId
+        diagnosticWorkspaceId: logAnalytics.outputs.resourceId
     }
     dependsOn: [
         rg
