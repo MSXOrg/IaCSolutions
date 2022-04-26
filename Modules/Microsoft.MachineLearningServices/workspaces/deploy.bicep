@@ -151,7 +151,7 @@ resource defaultTelemetry 'Microsoft.Resources/deployments@2021-04-01' = if (ena
   }
 }
 
-resource workspace 'Microsoft.MachineLearningServices/workspaces@2021-04-01' = {
+resource workspace 'Microsoft.MachineLearningServices/workspaces@2022-01-01-preview' = {
   name: name
   location: location
   tags: tags
