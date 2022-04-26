@@ -86,7 +86,7 @@ stages:
           }
 
 - stage: DeployWhatIf
-  dependsOn: Validate
+  dependsOn: Checkcode
   displayName: Deploy (whatif) solution
   jobs:
   - job: DeployWhatIf
@@ -116,7 +116,7 @@ stages:
           New-AzSubscriptionDeployment @DeploymentInputs
 
 - stage: Deploy
-  dependsOn: Validate
+  dependsOn: Checkcode
   displayName: Deploy solution
   jobs:
   - job: Deploy
