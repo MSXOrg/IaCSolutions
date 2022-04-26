@@ -15,7 +15,7 @@ var CakeSpinnerRoleProperties = json(loadTextContent('./CakeSpinnerRole.json'))
 
 var rgName = '${appName}${env}rg'
 
-var deployID = '${uniqueString(deployment().name, location)}'
+var deployID = uniqueString(deployment().name, location)
 
 module rg '../../Modules/Microsoft.Resources/resourceGroups/deploy.bicep' = {
     name: '${deployID}-rg'
@@ -31,7 +31,7 @@ module rg '../../Modules/Microsoft.Resources/resourceGroups/deploy.bicep' = {
 }
 
 module CakeSpinnerRole '../../Modules/Microsoft.Authorization/roleDefinitions/subscription/deploy.bicep' = {
-    name: 'roledef-${deployID}-CakeSpinnerRole'
+    name: 'dep-${deployID}-CakeSpinnerRole-roledef'
     params: {
         roleName: CakeSpinnerRoleProperties.name
         actions: CakeSpinnerRoleProperties.actions
@@ -43,7 +43,7 @@ module CakeSpinnerRole '../../Modules/Microsoft.Authorization/roleDefinitions/su
 }
 
 module FunctionApp '../../Modules/Microsoft.Web/sites/deploy.bicep' = {
-    name: '${deployID}-fa'
+    name: 'dep-${deployID}-fa'
     scope: resourceGroup(rgName)
     params: {
         name: '${appName}${env}fa'
@@ -69,7 +69,7 @@ module FunctionApp '../../Modules/Microsoft.Web/sites/deploy.bicep' = {
 }
 
 module storage '../../Modules/Microsoft.Storage/storageAccounts/deploy.bicep' = {
-    name: '${deployID}-sa'
+    name: 'dep-${deployID}-sa'
     scope: resourceGroup(rgName)
     params: {
         name: '${appName}${env}sa'
@@ -91,7 +91,7 @@ module storage '../../Modules/Microsoft.Storage/storageAccounts/deploy.bicep' = 
 }
 
 module keyVault '../../Modules/Microsoft.KeyVault/vaults/deploy.bicep' = {
-    name: '${deployID}-kv'
+    name: 'dep-${deployID}-kv'
     scope: resourceGroup(rgName)
     params: {
         name: '${appName}${env}kv'
@@ -104,7 +104,7 @@ module keyVault '../../Modules/Microsoft.KeyVault/vaults/deploy.bicep' = {
 }
 
 module logAnalytics '../../Modules/Microsoft.OperationalInsights/workspaces/deploy.bicep' = {
-    name: '${deployID}-la'
+    name: 'dep-${deployID}-la'
     scope: resourceGroup(rgName)
     params: {
         name: '${appName}${env}la'
@@ -116,7 +116,7 @@ module logAnalytics '../../Modules/Microsoft.OperationalInsights/workspaces/depl
 }
 
 module appInsights '../../Modules/Microsoft.Insights/components/deploy.bicep' = {
-    name: '${deployID}-ic'
+    name: 'dep-${deployID}-ic'
     scope: resourceGroup(rgName)
     params: {
         name: '${appName}${env}ic'
@@ -129,7 +129,7 @@ module appInsights '../../Modules/Microsoft.Insights/components/deploy.bicep' = 
 }
 
 module containerRegistry '../../Modules/Microsoft.ContainerRegistry/registries/deploy.bicep' = {
-    name: '${deployID}-cr'
+    name: 'dep-${deployID}-cr'
     scope: resourceGroup(rgName)
     params: {
         name: '${appName}${env}cr'
@@ -142,7 +142,7 @@ module containerRegistry '../../Modules/Microsoft.ContainerRegistry/registries/d
 }
 
 module mlworkspaces '../../Modules/Microsoft.MachineLearningServices/workspaces/deploy.bicep' = {
-    name: '${deployID}-ml'
+    name: 'dep-${deployID}-ml'
     scope: resourceGroup(rgName)
     params: {
         name: '${appName}${env}ml'
