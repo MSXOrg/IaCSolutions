@@ -25,7 +25,7 @@ param defaultDataLakeStorageFilesystem string
 param defaultDataLakeStorageCreateManagedPrivateEndpoint bool = false
 
 @description('Optional. Double encryption using a customer-managed key.')
-param encryption bool = false 
+param encryption bool = false
 
 @description('Optional. Keyvault where the encryption key is stored.')
 param encryptionKeyVaultName string = ''
@@ -277,3 +277,6 @@ output resourceGroupName string = resourceGroup().name
 
 @description('The workspace connectivity endpoints.')
 output connectivityEndpoints object = workspace.properties.connectivityEndpoints
+
+@description('The principal ID of the system assigned identity.')
+output systemAssignedPrincipalId string = workspace.identity.principalId

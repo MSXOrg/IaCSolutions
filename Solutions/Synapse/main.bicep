@@ -60,7 +60,7 @@ module storageAccount '../../Modules/Microsoft.Storage/storageAccounts/deploy.bi
                 roleDefinitionIdOrName: 'Storage Blob Data Reader'
                 principalIds: [
                     aadTeamGroupObjectId
-                    synapseWorkspace.outputs.resourceID
+                    synapseWorkspace.outputs.systemAssignedPrincipalId
                 ]
             }
         ]
