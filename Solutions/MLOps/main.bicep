@@ -15,7 +15,7 @@ var rgName = '${appName}${env}rg'
 
 var deployID = uniqueString(deployment().name, location)
 
-module rg '../../Modules/Microsoft.Resources/resourceGroups/deploy.bicep' = {
+module rg 'br/modules:microsoft.resources.resourcegroups:1' = {
     name: '${deployID}-rg'
     scope: subscription()
     params: {
