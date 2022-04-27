@@ -2,8 +2,40 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "env": {
-            "value": "test"
+        "aadTeamGroupObjectId": {
+            "value": "795af1ec-cd34-42ff-83d8-6f6c024f6cb6"
+        },
+        "synapseResourceGroupName": {
+            "value": "rg-name-0001"
+        },
+        "synapseWorkspaceName": {
+            "value": "syn-name-0001"
+        },
+        "omsWorkspaceResourceGroup": {
+            "value": "rg-name-0001"
+        },
+        "omsWorkspaceName": {
+            "value": "log-workspace-name-0001"
+        },
+        "storageAccountName": {
+            "value": "namedev0001"
+        },
+        "defaultStorageContainerName": {
+            "value": "syndev"
+        },
+        "pepResourceGroupName": {
+            "value": "rg-we-pep-shared-dev-01"
+        },
+        "pepVnetName": {
+            "value": "vnet-we-pep-shared-dev-01"
+        },
+        "pepSubnetName": {
+            "value": "snet-we-pep-shared-01"
+        },
+        "pepSubnetPrefix": {
+            "value": "10.0.1.0/24"
+        },
+        "pepDnsZoneResourceId": {
+            "value": "/subscriptions/xxxxxxxxxx/resourceGroups/rg-privatelinkzones-prd/providers/Microsoft.Network/privateDnsZones"
         }
     }
-}

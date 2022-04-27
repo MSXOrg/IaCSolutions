@@ -1,27 +1,99 @@
 targetScope = 'subscription'
 
-param env string = ''
-
-param appName string = 'appa'
-
 param location string = deployment().location
-
 param aadTeamGroupObjectId string
-param synapseResourceGroupName string = 'rg-name-0001'
-param synapseWorkspaceName string = 'syn-name-0001'
-param omsWorkspaceResourceGroup string = 'rg-name-0001'
-param omsWorkspaceName string = 'log-workspace-name-0001'
-param storageAccountName string = 'namedev0001'
-param defaultStorageUrl string = 'https://$(storageAccountName).dfs.core.windows.net'
-param defaultStorageContainerName string = 'syndev'
-param storageResourceGroupName string = 'rg-name-0001'
-param pepSubscription string = 'xxxxxxxxxx'
-param pepResourceGroupName string = 'rg-we-pep-shared-dev-01'
-param pepVnetName string = 'vnet-we-pep-shared-dev-01'
-param pepSubnetName string = 'snet-we-pep-shared-01'
-param pepDnsZoneResourceId string = '/subscriptions/xxxxxxxxxx/resourceGroups/rg-privatelinkzones-prd/providers/Microsoft.Network/privateDnsZones'
-param pepDestinationResourceId string = '/subscriptions/xxxxxxxxxxxxx/resourceGroups/$(synapseResourceGroupName)/providers/Microsoft.Synapse/workspaces/$(synapseWorkspaceName)'
-param pepDnsZoneNameDevEndpoint string = 'privatelink.dev.azuresynapse.net'
-param pepDnsZoneNameOnDemandEndpoint string = 'privatelink.sql.azuresynapse.net'
+param synapseResourceGroupName string
+param synapseWorkspaceName string
+param omsWorkspaceResourceGroup string
+param omsWorkspaceName string
+param storageAccountName string
+param defaultStorageContainerName string
+param pepResourceGroupName string
+param pepVnetName string
+param pepSubnetName string
+param pepSubnetPrefix string
+param pepDnsZoneResourceId string
 
 var deployID = uniqueString(deployment().name, location)
+
+resource vNet 'Microsoft.Network/virtualNetworks@2021-05-01' existing = {
+    scope: resourceGroup(pepResourceGroupName)
+    name: pepVnetName
+}
+
+resource law 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' existing = {
+    scope: resourceGroup(omsWorkspaceResourceGroup)
+    name: omsWorkspaceName
+}
+
+module synapseSubnet '../../Modules/Microsoft.Network/virtualNetworks/subnets/deploy.bicep' = {
+    scope: resourceGroup(pepResourceGroupName)
+    name: 'dep-${deployID}-synapse-subnet'
+    params: {
+        addressPrefix: pepSubnetPrefix
+        name: pepSubnetName
+        virtualNetworkName: vNet.name
+    }
+}
+
+module synapseRG '../../Modules/Microsoft.Resources/resourceGroups/deploy.bicep' = {
+    name: 'dep-${deployID}-synapse-rg'
+    params: {
+        name: synapseResourceGroupName
+    }
+}
+
+module storageAccount '../../Modules/Microsoft.Storage/storageAccounts/deploy.bicep' = {
+    scope: resourceGroup(synapseResourceGroupName)
+    name: 'dep-${deployID}-storageAccount'
+    params: {
+        name: storageAccountName
+        blobServices: {
+            containers: [
+                {
+                    name: defaultStorageContainerName
+                }
+            ]
+        }
+        roleAssignments: [
+            {
+                roleDefinitionIdOrName: 'Storage Blob Data Reader'
+                principalIds: [
+                    aadTeamGroupObjectId
+                    synapseWorkspace.outputs.resourceID
+                ]
+            }
+        ]
+    }
+}
+
+module synapseWorkspace '../../Modules/Microsoft.Synapse/workspaces/deploy.bicep' = {
+    scope: resourceGroup(synapseResourceGroupName)
+    name: 'dep-${deployID}-synapseWorkspace'
+    params: {
+        name: synapseWorkspaceName
+        defaultDataLakeStorageAccountName: storageAccountName
+        defaultDataLakeStorageFilesystem: 'synapsews'
+        sqlAdministratorLogin: 'sqladminuser'
+        roleAssignments: [
+            {
+                roleDefinitionIdOrName: 'Contributor'
+                principalIds: [
+                    aadTeamGroupObjectId
+                ]
+            }
+        ]
+        privateEndpoints: [
+            {
+                subnetResourceId: synapseSubnet.outputs.resourceId
+                service: 'Dev'
+                privateDnsZoneResourceIds: pepDnsZoneResourceId
+            }
+            {
+                subnetResourceId: synapseSubnet.outputs.resourceId
+                service: 'SqlOnDemand'
+                privateDnsZoneResourceIds: pepDnsZoneResourceId
+            }
+        ]
+    }
+}
