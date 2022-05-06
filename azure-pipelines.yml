@@ -20,5 +20,5 @@ pool:
 
 steps:
 - pwsh: |
-    Write-Output "Service Connection name: $(ServiceConnection)"
-    Write-Output "Parameter file path: $(TemplateParameterFilePath)"
+    Write-Output "Service Connection name: '$(ServiceConnection)'"
+    Write-Output "Parameter file path: '$(TemplateParameterFilePath)'"
