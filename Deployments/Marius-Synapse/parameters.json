@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "aadTeamGroupObjectId": {
-            "value": "795af1ec-cd34-42ff-83d8-6f6c024f6cb6"
+            "value": "975030c5-4233-4c75-b9ee-6924aaf8a221"
         },
         "synapseResourceGroupName": {
             "value": "rg-name-0001"
@@ -12,13 +12,13 @@
             "value": "syn-name-0001"
         },
         "omsWorkspaceResourceGroup": {
-            "value": "rg-name-0001"
+            "value": "rg-we-monitoring-dev-01"
         },
         "omsWorkspaceName": {
             "value": "log-workspace-name-0001"
         },
         "storageAccountName": {
-            "value": "namedev0001"
+            "value": "namedev1159868713"
         },
         "defaultStorageContainerName": {
             "value": "syndev"
@@ -31,12 +31,10 @@
         },
         "pepSubnetName": {
             "value": "snet-we-pep-shared-01"
-        },
-        "pepSubnetPrefix": {
-            "value": "10.0.1.0/24"
-        },
-        "pepDnsZoneResourceId": {
-            "value": "/subscriptions/xxxxxxxxxx/resourceGroups/rg-privatelinkzones-prd/providers/Microsoft.Network/privateDnsZones"
         }
+        // ,
+        // "pepDnsZoneResourceId": {
+        //     "value": "/subscriptions/xxxxxxxxxx/resourceGroups/rg-privatelinkzones-prd/providers/Microsoft.Network/privateDnsZones"
+        // }
     }
 }

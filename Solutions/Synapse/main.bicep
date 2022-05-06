@@ -11,29 +11,22 @@ param defaultStorageContainerName string
 param pepResourceGroupName string
 param pepVnetName string
 param pepSubnetName string
-param pepSubnetPrefix string
-param pepDnsZoneResourceId string
+// param pepDnsZoneResourceId string
 
 var deployID = uniqueString(deployment().name, location)
 
 resource vNet 'Microsoft.Network/virtualNetworks@2021-05-01' existing = {
     scope: resourceGroup(pepResourceGroupName)
     name: pepVnetName
+
+    resource pepSubnet 'subnets@2021-08-01' existing = {
+        name: pepSubnetName
+    }
 }
 
 resource law 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' existing = {
     scope: resourceGroup(omsWorkspaceResourceGroup)
     name: omsWorkspaceName
-}
-
-module synapseSubnet '../../Modules/Microsoft.Network/virtualNetworks/subnets/deploy.bicep' = {
-    scope: resourceGroup(pepResourceGroupName)
-    name: 'dep-${deployID}-synapse-subnet'
-    params: {
-        addressPrefix: pepSubnetPrefix
-        name: pepSubnetName
-        virtualNetworkName: vNet.name
-    }
 }
 
 module synapseRG '../../Modules/Microsoft.Resources/resourceGroups/deploy.bicep' = {
@@ -85,14 +78,14 @@ module synapseWorkspace '../../Modules/Microsoft.Synapse/workspaces/deploy.bicep
         ]
         privateEndpoints: [
             {
-                subnetResourceId: synapseSubnet.outputs.resourceId
+                subnetResourceId: vNet::pepSubnet.id
                 service: 'Dev'
-                privateDnsZoneResourceIds: pepDnsZoneResourceId
+                // privateDnsZoneResourceIds: pepDnsZoneResourceId
             }
             {
-                subnetResourceId: synapseSubnet.outputs.resourceId
+                subnetResourceId: vNet::pepSubnet.id
                 service: 'SqlOnDemand'
-                privateDnsZoneResourceIds: pepDnsZoneResourceId
+                // privateDnsZoneResourceIds: pepDnsZoneResourceId
             }
         ]
     }
