@@ -58,6 +58,9 @@ module storageAccount '../../Modules/Microsoft.Storage/storageAccounts/deploy.bi
             }
         ]
     }
+    dependsOn: [
+        synapseRG
+    ]
 }
 
 module synapseWorkspace '../../Modules/Microsoft.Synapse/workspaces/deploy.bicep' = {
@@ -89,4 +92,7 @@ module synapseWorkspace '../../Modules/Microsoft.Synapse/workspaces/deploy.bicep
             }
         ]
     }
+    dependsOn: [
+        synapseRG
+    ]
 }
