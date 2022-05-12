@@ -7,6 +7,11 @@ parameters:
   - name: ServiceConnection
     displayName: Service Connection name
     type: string
+    values:
+      - 'IaCSolutions-SPN'
+      - 'IaCSolutions-SPN1'
+      - 'IaCSolutions-SPN2'
+      - 'IaCSolutions-SPN3'
   - name: TemplateParameterFilePath
     displayName: Parameter file path
     type: string
